@@ -38,6 +38,12 @@
     <button type="submit" class="btn btn-primary">Confirm Booking</button>
 </form>
 
+<hr />
+<p style="margin-top:20px;">
+    Already have a booking?
+    <a asp-controller="Booking" asp-action="ManageBookings">Manage your booking here</a>.
+</p>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

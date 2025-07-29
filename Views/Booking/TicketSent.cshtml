@@ -1,13 +1,12 @@
 ﻿@{
-    ViewData["Title"] = "Booking Confirmation";
+    ViewData["Title"] = "E-Ticket Sent";
 }
 
 <div style="border:2px solid black; padding:20px; width:500px; margin:30px auto; text-align:center; font-family:sans-serif;">
-    <h2>Booking Successful</h2>
+    <h2>Your E-Ticket Is On The Way!</h2>
 
     <p style="margin:20px 0;">
-        Thank you for booking with <strong>The Hervey Players</strong>.<br />
-        Your ticket details will be emailed to you shortly.
+        A confirmation email with your ticket details will be sent to the email address you provided.
     </p>
 
     <hr style="margin:20px 0;" />
@@ -18,7 +17,7 @@
     </p>
 
     <p>
-        Want to make another booking?
+        Make another booking:
         <a asp-controller="Booking" asp-action="Create">Book Again</a>
     </p>
 
