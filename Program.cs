@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using HerveyPlayersBooking.Data;
+using AutoMapper; // <-- Add AutoMapper namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,11 @@ builder.Services.AddControllersWithViews();
 // Configure SQLite database connection.
 builder.Services.AddDbContext<BookingContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// =========================
+// Register AutoMapper
+// =========================
+builder.Services.AddAutoMapper(typeof(Program));
 
 // =========================
 // Add Session Configuration

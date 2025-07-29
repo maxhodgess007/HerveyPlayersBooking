@@ -2,6 +2,7 @@
 using HerveyPlayersBooking.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace HerveyPlayersBooking.Controllers
 {
@@ -10,57 +11,68 @@ namespace HerveyPlayersBooking.Controllers
     public class BookingApiController : ControllerBase
     {
         private readonly BookingContext _context;
+        private readonly IMapper _mapper;
 
-        public BookingApiController(BookingContext context)
+        public BookingApiController(BookingContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // =======================
         // GET: api/BookingApi
         // =======================
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+        public async Task<ActionResult<IEnumerable<BookingDto>>> GetBookings()
         {
-            return await _context.Bookings.ToListAsync();
+            var bookings = await _context.Bookings.ToListAsync();
+            return _mapper.Map<List<BookingDto>>(bookings);
         }
 
         // =======================
         // GET: api/BookingApi/5
         // =======================
         [HttpGet("{id}")]
-        public async Task<ActionResult<Booking>> GetBooking(int id)
+        public async Task<ActionResult<BookingDto>> GetBooking(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);
 
             if (booking == null)
                 return NotFound();
 
-            return booking;
+            return _mapper.Map<BookingDto>(booking);
         }
 
         // =======================
         // POST: api/BookingApi
         // =======================
         [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+        public async Task<ActionResult<BookingDto>> PostBooking(BookingDto bookingDto)
         {
+            var booking = _mapper.Map<Booking>(bookingDto);
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking);
+            var createdDto = _mapper.Map<BookingDto>(booking);
+            return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, createdDto);
         }
 
         // =======================
         // PUT: api/BookingApi/5
         // =======================
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(int id, Booking booking)
+        public async Task<IActionResult> PutBooking(int id, BookingDto bookingDto)
         {
-            if (id != booking.Id)
+            if (id != bookingDto.Id)
                 return BadRequest();
 
-            _context.Entry(booking).State = EntityState.Modified;
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+                return NotFound();
+
+            // Map updated properties
+            _mapper.Map(bookingDto, booking);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -86,12 +98,12 @@ namespace HerveyPlayersBooking.Controllers
         // =======================
         // STRIPE PAYMENT PLACEHOLDER
         // =======================
-        // Future endpoint: initiate payment session
         [HttpPost("start-payment")]
         public IActionResult StartPayment([FromBody] int bookingId)
         {
-            // Placeholder: in future this will call Stripe API
+            // Placeholder for Stripe integration later
             return Ok(new { message = "Stripe payment integration coming soon", bookingId });
         }
     }
 }
+
